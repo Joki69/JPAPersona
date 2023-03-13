@@ -25,14 +25,6 @@ public class Debilidad implements Serializable {
     int debilidadId;
 
     /**
-     * El identificador del arcana
-     *
-     */
-    @Column(name = "id_arcana")
-    int arcanaId;
-
-
-    /**
      * El nombre de la debilidad
      *
      */
@@ -49,6 +41,8 @@ public class Debilidad implements Serializable {
         this.debilidadId = debilidadId;
         this.nombreDebilidad = nombreDebilidad ;
     }
+
+    public Debilidad(){}
     /**
      * Devuelve la ID de una debilidad
      *
@@ -64,22 +58,6 @@ public class Debilidad implements Serializable {
      */
     public void setDebilidadId(int debilidadId) {
         this.debilidadId = debilidadId;
-    }
-    /**
-     * Devuelve la ID de un arcana
-     *
-     @return Su identificador
-     */
-    public int getArcanaId() {
-        return arcanaId;
-    }
-    /**
-     * Editamos el identificador del arcana
-     *
-     * @param arcanaId Le pasamos la nueva ID
-     */
-    public void setArcanaId(int arcanaId) {
-        this.arcanaId = arcanaId;
     }
 
     /**
@@ -103,7 +81,6 @@ public class Debilidad implements Serializable {
     public String toString() {
         return "Debilidad{" +
                 "debilidadId=" + debilidadId +
-                ", arcanaId=" + arcanaId +
                 ", nombreDebilidad='" + nombreDebilidad + '\'' +
                 '}';
     }

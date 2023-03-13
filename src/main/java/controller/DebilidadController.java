@@ -1,6 +1,5 @@
 package controller;
 
-import model.Arcana;
 import model.Debilidad;
 
 import javax.persistence.EntityManager;
@@ -9,9 +8,6 @@ import javax.persistence.Persistence;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.*;
 
@@ -23,9 +19,10 @@ public class DebilidadController {
     /**
      * Creamos una nueva instancia del controlador de Debilidades usando la conexion de la base de datos
      *
-     * @param connection Le pasamos la conexion de la base de datos
+     * @param connection           Le pasamos la conexion de la base de datos
+     * @param entityManagerFactory
      */
-    public DebilidadController(Connection connection) {
+    public DebilidadController(Connection connection, EntityManagerFactory entityManagerFactory) {
         this.connection = connection;
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -47,11 +44,11 @@ public class DebilidadController {
         String linea = "";
         int contadorId=1;
         while ((linea = br.readLine()) != null) {
-            StringTokenizer str = new StringTokenizer(linea, "\n");
+            StringTokenizer str = new StringTokenizer(linea);
             name = str.nextToken();
             // System.out.println(id + name + damage);
             weaponsList.add(new Debilidad(contadorId,name));
-
+            contadorId++;
         }
         br.close();
 
@@ -82,7 +79,7 @@ public class DebilidadController {
     public void listAllDebilidades() {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
-        List<Debilidad> result = em.createQuery("from debilidad", Debilidad.class)
+        List<Debilidad> result = em.createQuery("from Debilidad", Debilidad.class)
                 .getResultList();
 
         for (Debilidad debilidad : result) {
@@ -111,14 +108,8 @@ public class DebilidadController {
         entityManager.createNativeQuery(
                 "CREATE TABLE debilidad (\n" +
                         "id_debilidad serial NOT NULL,\n" +
-                        "id_arcana integer NOT NULL,\n" +
-                        "nombre_debilidad character varying(2000) NOT NULL,\n" +
-                        "CONSTRAINT pk_debilidad PRIMARY KEY(id_debilidad),\n" +
-                        "CONSTRAINT fk_arcana\n" +
-                        "      FOREIGN KEY(id_arcana)\n" +
-                        "\t  REFERENCES arcana(id_arcana)\n" +
-                        "\t  MATCH SIMPLE\n" +
-                        "\t  ON UPDATE NO ACTION ON DELETE NO ACTION,\n" +
+                        "nombre_debilidad character varying(200),\n" +
+                        "CONSTRAINT pk_debilidad PRIMARY KEY(id_debilidad)\n" +
                         ")"
         ).executeUpdate();
 

@@ -42,6 +42,8 @@ public class Arcana implements Serializable {
         this.arcanaId = arcanaId;
     }
 
+    public Arcana(){}
+
     /**
      * Devuelve el identificador del arcana
      *

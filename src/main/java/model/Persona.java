@@ -65,6 +65,8 @@ public class Persona implements Serializable {
         this.historia = historia;
     }
 
+    public Persona(){}
+
     /**
      * Devuelve la ID de un persona
      *
@@ -169,5 +171,17 @@ public class Persona implements Serializable {
      */
     public void setHistoria(String historia) {
         this.historia = historia;
+    }
+
+    @Override
+    public String toString() {
+        return "Persona{" +
+                "personaId=" + personaId +
+                ", debilidadId=" + debilidadId +
+                ", arcanaId=" + arcanaId +
+                ", personaNombre='" + personaNombre + '\'' +
+                ", nombreArcana='" + nombreArcana + '\'' +
+                ", historia='" + historia + '\'' +
+                '}';
     }
 }

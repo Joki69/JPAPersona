@@ -115,7 +115,7 @@ public class ArcanaController {
      */
     public void createTableArcana(){
         // crea un EntityManagerFactory utilizando la configuración definida en persistence.xml
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("JPAMagazine");
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("JPAMagazines");
 
         // obtiene un EntityManager a partir del EntityManagerFactory
         EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -147,7 +147,7 @@ public class ArcanaController {
      */
     public void dropTableArcana() {
         // crea un EntityManagerFactory utilizando la configuración definida en persistence.xml
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("JPAPersona");
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("JPAMagazines");
 
         // obtiene un EntityManager a partir del EntityManagerFactory
         EntityManager entityManager = entityManagerFactory.createEntityManager();

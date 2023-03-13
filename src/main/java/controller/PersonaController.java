@@ -2,14 +2,10 @@ package controller;
 
 import model.Debilidad;
 import model.Persona;
-import view.Menu;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -26,9 +22,11 @@ public class PersonaController {
     private Connection connection;
     private EntityManagerFactory entityManagerFactory;
 
+    private int contadorNuevosPersonaID=226;
+
     private ArcanaController arcanaController = new ArcanaController(connection);
 
-    private DebilidadController debilidadController = new DebilidadController(connection);
+    private DebilidadController debilidadController = new DebilidadController(connection, entityManagerFactory);
     /**
      * Creamos una nueva instancia del controlador de persona usando la conexion de la base de datos
      *
@@ -143,7 +141,7 @@ public class PersonaController {
                     id_arcana = 21;
                     break;
             }
-            Persona persona = new Persona(contadorPersona,id_arcana,id_arcana,fields[0],fields[1],fields[2]);
+            Persona persona = new Persona(contadorPersona,id_arcana,id_arcana,fields[1],fields[0],fields[2]);
             // Agrega el objeto de personaje a la lista
             personas.add(persona);
             contadorPersona++;
@@ -202,7 +200,6 @@ public class PersonaController {
 
         // crea la tabla Persona
         entityManager.createNativeQuery(
-                "\n" +
                         "CREATE TABLE persona (\n" +
                         "id_persona serial NOT NULL,\n" +
                         "id_arcana integer NOT NULL,\n" +
@@ -218,7 +215,7 @@ public class PersonaController {
                         "\t  ON UPDATE NO ACTION ON DELETE NO ACTION,\n" +
                         "   CONSTRAINT fk_debilidad\n" +
                         "      FOREIGN KEY(id_debilidad)\n" +
-                        "      REFERENCES debilidades(id_debilidad)\n" +
+                        "      REFERENCES debilidad(id_debilidad)\n" +
                         "      MATCH SIMPLE\n" +
                         "      ON UPDATE NO ACTION ON DELETE CASCADE\n" +
                         ")"
@@ -258,7 +255,43 @@ public class PersonaController {
         entityManager.close();
         entityManagerFactory.close();
     }
+    /**
+     * Actualiza el nombre del persona que buscaras con su ID
+     *
+     * @param personaId El ID del persona que quieres actualizar
+     * @param updateName El nombre nuevo que le quieres poner a tu persona
+     */
+    public void updatePersona(int personaId, String updateName) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        Persona persona = (Persona) em.find(Persona.class, personaId);
+        persona.setPersonaNombre(updateName);
+        em.merge(persona);
+        em.getTransaction().commit();
 
+        em.getTransaction().begin();
+        persona = em.find(Persona.class, personaId);
+        System.out.println("Informacion del persona despues de tu Update:");
+        System.out.println(persona.toString());
+        em.getTransaction().commit();
+
+        em.close();
+    }
+    public void createNewPersona(int idArcanaDebilidad, String nombreNuevo, String arcanaNuevo, String historia) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        Persona persona= new Persona();
+        this.contadorNuevosPersonaID++;
+        persona.setPersonaNombre(nombreNuevo);
+        persona.setPersonaId(contadorNuevosPersonaID);
+        persona.setArcanaId(idArcanaDebilidad);
+        persona.setDebilidadId(idArcanaDebilidad);
+        persona.setHistoria(historia);
+        persona.setNombreArcana(arcanaNuevo);
+        em.persist(persona);
+        em.getTransaction().commit();
+        em.close();
+    }
 
 }
 
