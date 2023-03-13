@@ -1,13 +1,21 @@
 package controller;
 
+import model.Debilidad;
+import model.Persona;
+import view.Menu;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Com esta clase podremos acceder y manipular la información almacenada dentro de la tabla persona
@@ -16,337 +24,241 @@ import java.util.Scanner;
  */
 public class PersonaController {
     private Connection connection;
-    private Scanner scanner;
+    private EntityManagerFactory entityManagerFactory;
 
+    private ArcanaController arcanaController = new ArcanaController(connection);
+
+    private DebilidadController debilidadController = new DebilidadController(connection);
     /**
-     * Con el contructor podremos conectarnos a la base de datos para hacer lo que pida el usuario dentro de la sopciones
+     * Creamos una nueva instancia del controlador de persona usando la conexion de la base de datos
      *
-     * @param connection
+     * @param connection Le pasamos la conexion de la base de datos
+     * @param entityManagerFactory Le pasamos tambien el Hibernate que hemos creado
      */
-    public PersonaController(Connection connection) {
+    public PersonaController(Connection connection, EntityManagerFactory entityManagerFactory) {
         this.connection = connection;
-        this.scanner = new Scanner(System.in);
-    }
-
-    /**
-     * Este metodo borrara la tabla persona
-     */
-    public void borrarTablaPersona() {
-        try {
-            Statement st = connection.createStatement();
-
-            st.executeUpdate("DROP TABLE persona");
-        } catch (SQLException e) {
-            System.out.println("No se ha podido borrar persona");
-        }
-    }
-
-    /**
-     * Este metodo creara la tabla de persona vacías
-     */
-    public void crearTablaPersona() {
-        try {
-            Statement st = connection.createStatement();
-
-            st.executeUpdate("CREATE TABLE persona (" +
-                    "id_persona serial," +
-                    "id_arcana integer," +
-                    "nombre_arcana varchar(1000)," +
-                    "nombre_persona text," +
-                    "historia text," +
-                    "PRIMARY KEY(id_persona)," +
-                    "    CONSTRAINT fk_arcana" +
-                    "      FOREIGN KEY(id_arcana)" +
-                    "      REFERENCES arcana(id_arcana));");
-
-            st.close();
-
-        } catch (SQLException e) {
-            System.out.println("Error: No se pueden crear las tablas, fijate si ya estan creadas.");
-        }
-    }
-
-    /**
-     * Con este metodo rellenaremos la tabla de persona con el csv correspondiente
-     */
-    public void poblarPersona() {
-        List<String[]> csvData = new ArrayList<>();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader("src/main/resources/Demonios.csv"));
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split("\",\"");
-                csvData.add(data);
-            }
-
-            for (String[] data : csvData) {
-                try {
-                    String nombre_arcana = data[0];
-                    String nombre_persona = data[1];
-                    String historia = data[2];
-
-                    String sql = "INSERT INTO persona " + "(nombre_arcana,nombre_persona,historia,id_arcana) VALUES(?,?,?,?)";
-
-                    PreparedStatement pst = connection.prepareStatement(sql);
-                    pst.setString(1, nombre_arcana);
-                    pst.setString(2, nombre_persona);
-                    pst.setString(3, historia);
-                    int id_arcana = 0;
-                    switch (nombre_arcana) {
-
-                        case "Fool":
-                            id_arcana = 1;
-                            break;
-                        case "Magician":
-                            id_arcana = 2;
-                            break;
-                        case "Priestess":
-                            id_arcana = 3;
-                            break;
-                        case "Empress":
-                            id_arcana = 4;
-                            break;
-                        case "Emperor":
-                            id_arcana = 5;
-                            break;
-                        case "Hierophant":
-                            id_arcana = 6;
-                            break;
-                        case "Lovers":
-                            id_arcana = 7;
-                            break;
-                        case "Chariot":
-                            id_arcana = 8;
-                            break;
-                        case "Justice":
-                            id_arcana = 9;
-                            break;
-                        case "Hermit":
-                            id_arcana = 10;
-                            break;
-                        case "Fortune":
-                            id_arcana = 11;
-                            break;
-                        case "Strength":
-                            id_arcana = 12;
-                            break;
-                        case "Hanged Man":
-                            id_arcana = 13;
-                            break;
-                        case "Death":
-                            id_arcana = 14;
-                            break;
-                        case "Temperance":
-                            id_arcana = 15;
-                            break;
-                        case "Devil":
-                            id_arcana = 16;
-                            break;
-                        case "Tower":
-                            id_arcana = 17;
-                            break;
-                        case "Star":
-                            id_arcana = 18;
-                            break;
-                        case "Moon":
-                            id_arcana = 19;
-                            break;
-                        case "Sun":
-                            id_arcana = 20;
-                            break;
-                        case "Judgement":
-                            id_arcana = 21;
-                            break;
-                    }
-
-                    pst.setInt(4, id_arcana);
-
-
-                    pst.executeUpdate();
-                    pst.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Con esta clase el usuario podra crear un nuevo persona para añadirlo a la tabla persona se le preguntara
-     * el aracana el nombre y la historia del persona
-     */
-    public void insertNewPersona(ACBMenu menu) {
-        ResultSet rs = null;
-        System.out.println("Escribe el arcana del persona que quieras añadir");
-        String nombre_arcana = menu.arcanaChek();
-        System.out.println("Escribe el nombre del persona que quieras añadir");
-        String nombre_persona = scanner.nextLine();
-        System.out.println("Escribe la historia del persona que quieras añadir");
-        String historia = scanner.nextLine();
-        try {
-            String sql = "INSERT INTO persona " + "(nombre_arcana,nombre_persona,historia) VALUES(?,?,?)";
-            PreparedStatement pst = connection.prepareStatement(sql);
-            pst.setString(1, nombre_arcana);
-            pst.setString(2, nombre_persona);
-            pst.setString(3, historia);
-
-            pst.executeUpdate();
-            pst.close();
-        } catch (SQLException e) {
-            System.out.println("No se han podido modificar los datos");
-        }
+        this.entityManagerFactory = entityManagerFactory;
     }
 
 
     /**
-     * Con este metodo podremos ver toda la información que contiene la tabla persona
-     */
-    public void mostrarPersona() {
-        System.out.println("\nPERSONAS");
-        ResultSet rs = null;
-        String sql = "SELECT * FROM persona";
-        try {
-            Statement st = connection.createStatement();
-
-            rs = st.executeQuery(sql);
-
-            while (rs.next()) {
-                System.out.println("******************************************************" +
-                        "\nID Persona: " + rs.getString("id_persona") +
-                        "\nID Arcana: " + rs.getString("id_arcana") +
-                        "\nNombre Arcana: " + rs.getString("nombre_arcana") +
-                        "\nNombre Persona: " + rs.getString("nombre_persona") +
-                        "\nHistoria del persona: " + rs.getString("historia") +
-                        "\n******************************************************");
-            }
-
-            rs.close();
-            st.close();
-
-        } catch (SQLException e) {
-            System.out.println("Error: La tabla persona no existe");
-        }
-    }
-
-    /**
-     * Muestra la información de un persona pero el usuario tiene que conocer el nombre del persona que busca
-     */
-    public void mostrarPersonaNombre() {
-        ResultSet rs = null;
-        System.out.println("Introduce el nombre del persona:");
-        String nombrePersona = scanner.nextLine();
-
-        String sql = "SELECT * FROM persona WHERE nombre_persona = '" + nombrePersona + "'";
-        try {
-            Statement st = connection.createStatement();
-
-            rs = st.executeQuery(sql);
-
-            while (rs.next()) {
-                System.out.println("******************************************************" +
-                        "\nID Persona: " + rs.getString("id_persona") +
-                        "\nID Arcana: " + rs.getString("id_arcana") +
-                        "\nNombre Arcana: " + rs.getString("nombre_arcana") +
-                        "\nNombre Persona: " + rs.getString("nombre_persona") +
-                        "\nHistoria del persona: " + rs.getString("historia") +
-                        "\n******************************************************");
-            }
-
-            rs.close();
-            st.close();
-
-        } catch (SQLException e) {
-            System.out.println("Error: El parametro " + nombrePersona + " no existe");
-        }
-    }
-
-    /**
-     * Muestra todos los personas que compartan el mismo arcana
+     * Esta clase se encarga de leer el archivo CSV, y con este archivo rellenarnos toda la tabla de nuestra
+     * base de datos con la informacion que saca del archivo.
      *
-     * @param arcana
+     * @param demoniosFile la ruta del archivo characters que queremos leer
+     * @param debilidadesFile la ruta del archivo weapons que queremos leer
+     * @return Una lista de characters, que luego se meteran con ayuda de otros metodos
+     * @throws IOException Devuelve este error si hay algun problema al leer los archivos
      */
-    public void mostrarPersonaArcanaNombre(String arcana) {
-        ResultSet rs = null;
-        String sql = "SELECT * FROM persona WHERE nombre_arcana = '" + arcana + "'";
-        try {
-            Statement st = connection.createStatement();
+    public List<Persona> readDemoniosFile(String demoniosFile, String debilidadesFile) throws IOException {
+        // Lee el archivo de demonios
+        List<String> personaLines = Files.readAllLines(Paths.get(demoniosFile), StandardCharsets.UTF_8);
+        // Lee el archivo de debilidades
+        List<String> debilidadLines = Files.readAllLines(Paths.get(debilidadesFile), StandardCharsets.UTF_8);
 
-            rs = st.executeQuery(sql);
+        List<Persona> personas = new ArrayList<Persona>();
 
-            while (rs.next()) {
-                System.out.println("******************************************************" +
-                        "\nID Persona: " + rs.getString("id_persona") +
-                        "\nID Arcana: " + rs.getString("id_arcana") +
-                        "\nNombre Arcana: " + rs.getString("nombre_arcana") +
-                        "\nNombre Persona: " + rs.getString("nombre_persona") +
-                        "\nHistoria del persona: " + rs.getString("historia") +
-                        "\n******************************************************");
+        // Crea un mapa para guardar las armas por ID
+        Map<Integer, Debilidad> debilidadMap = new HashMap<Integer, Debilidad>();
+        int contadorIdDebilidad=1;
+        for (String debilidadLine : debilidadLines) {
+            // Separa la línea en campos
+            String[] fields = debilidadLine.split("\n");
+            // Crea un objeto de debilidad con los campos correspondientes
+            Debilidad debilidad= new Debilidad(contadorIdDebilidad, fields[0]);
+            // Agrega el objeto de arma al mapa
+            debilidadMap.put(debilidad.getDebilidadId(), debilidad);
+            contadorIdDebilidad++;
+        }
+        int contadorPersona=1;
+        // Crea los objetos de personaje con las armas correspondientes
+        for (String personaLine : personaLines) {
+
+            // Separa la línea en campos
+            String[] fields = personaLine.split("\",\"");
+            // Crea un objeto de persona con los campos correspondientes
+            int id_arcana = 0;
+            switch (fields[0]) {
+                case "Fool":
+                    id_arcana = 1;
+                    break;
+                case "Magician":
+                    id_arcana = 2;
+                    break;
+                case "Priestess":
+                    id_arcana = 3;
+                    break;
+                case "Empress":
+                    id_arcana = 4;
+                    break;
+                case "Emperor":
+                    id_arcana = 5;
+                    break;
+                case "Hierophant":
+                    id_arcana = 6;
+                    break;
+                case "Lovers":
+                    id_arcana = 7;
+                    break;
+                case "Chariot":
+                    id_arcana = 8;
+                    break;
+                case "Justice":
+                    id_arcana = 9;
+                    break;
+                case "Hermit":
+                    id_arcana = 10;
+                    break;
+                case "Fortune":
+                    id_arcana = 11;
+                    break;
+                case "Strength":
+                    id_arcana = 12;
+                    break;
+                case "Hanged Man":
+                    id_arcana = 13;
+                    break;
+                case "Death":
+                    id_arcana = 14;
+                    break;
+                case "Temperance":
+                    id_arcana = 15;
+                    break;
+                case "Devil":
+                    id_arcana = 16;
+                    break;
+                case "Tower":
+                    id_arcana = 17;
+                    break;
+                case "Star":
+                    id_arcana = 18;
+                    break;
+                case "Moon":
+                    id_arcana = 19;
+                    break;
+                case "Sun":
+                    id_arcana = 20;
+                    break;
+                case "Judgement":
+                    id_arcana = 21;
+                    break;
             }
-
-            rs.close();
-            st.close();
-
-        } catch (SQLException e) {
-            System.out.println("Error: El parametro " + arcana + " no existe");
+            Persona persona = new Persona(contadorPersona,id_arcana,id_arcana,fields[0],fields[1],fields[2]);
+            // Agrega el objeto de personaje a la lista
+            personas.add(persona);
+            contadorPersona++;
         }
+
+        return personas;
     }
 
     /**
-     * Modifica el nombre de un persona a uno nuevo que elija el usuario
-     */
-    public void modificarNombrePersona() {
-        ResultSet rs = null;
-        System.out.println("Escribe el nombre del persona que quieras modificar");
-        String viejoNombre = scanner.nextLine();
-        System.out.println("Ahora el nuevo nombre para el persona");
-        String nuevoNombre = scanner.nextLine();
-        try {
-            Statement st = connection.createStatement();
-            st.executeUpdate("UPDATE persona SET nombre_persona = '" + nuevoNombre + "' WHERE nombre_persona = '" + viejoNombre + "'");
-        } catch (SQLException e) {
-            System.out.println("No se han podido modificar los datos");
-        }
-    }
-
-    /**
-     * Con este metodo el usuario podrá cambiar el arcana al que pertenezcan un grupo de persona por uno nuevo que el usuario elija
+     * Añade un persona (que procesamos con el csv) y lo mete en la base de datos
      *
-     * @param menu
+     * @param persona El persona que queremos añadir
      */
-    public void modificarNombrePersonaPorArcana(ACBMenu menu) {
-        ResultSet rs = null;
-
-        System.out.println("Escribe el arcana de los persona que quieras modificar");
-        String viejoArcana = menu.arcanaChek();
-        System.out.println("Ahora el nuevo arcana para los persona");
-        String nuevoArcana = menu.arcanaChek();
-        try {
-            Statement st = connection.createStatement();
-            st.executeUpdate("UPDATE persona SET nombre_arcana = '" + nuevoArcana + "' WHERE nombre_arcana = '" + viejoArcana + "'");
-        } catch (SQLException e) {
-            System.out.println("No se han podido modificar los datos");
+    public void addPersona(Persona persona) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        Persona personaExists = (Persona) em.find(Persona.class, persona.getPersonaId());
+        if (personaExists == null ){
+            System.out.println("inserting persona...");
+            em.persist(persona);
         }
+        em.merge(persona);
+        em.getTransaction().commit();
+        em.close();
     }
 
     /**
-     * Este metodo borrara todos los persona que pertenezcan al mismo arcana
-     *
-     * @param entidad
+     * Lista todos los characters de la base de datos
      */
-    public void borrarTablaPersonaPorArcana(String entidad) {
-        ResultSet rs = null;
+    public void listAllPersona() {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        List<Persona> result = em.createQuery("from Persona", Persona.class)
+                .getResultList();
 
-        try {
-            Statement st = connection.createStatement();
-            st.executeUpdate("DELETE FROM persona WHERE nombre_arcana = '" + entidad + "'");
-        } catch (SQLException e) {
-            System.out.println("No se han podido borrar los parametros seleccionados");
+        for (Persona persona : result) {
+            System.out.println(persona.toString());
         }
+        em.getTransaction().commit();
+        em.close();
     }
+
+    /**
+     * Crea la tabla persona con ayuda del schema SQL
+     *
+     */
+    public void createTablePersona() {
+        // crea un EntityManagerFactory utilizando la configuración definida en persistence.xml
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("JPAMagazines");
+
+        // obtiene un EntityManager a partir del EntityManagerFactory
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+
+        // comienza una transacción
+        entityManager.getTransaction().begin();
+
+        // crea la tabla Persona
+        entityManager.createNativeQuery(
+                "\n" +
+                        "CREATE TABLE persona (\n" +
+                        "id_persona serial NOT NULL,\n" +
+                        "id_arcana integer NOT NULL,\n" +
+                        "id_debilidad integer NOT NULL,\n" +
+                        "nombre_arcana character varying(100)NOT NULL,\n" +
+                        "nombre_persona character varying(100)NOT NULL,\n" +
+                        "historia character varying(3000)NOT NULL,\n" +
+                        "CONSTRAINT pk_persona PRIMARY KEY(id_persona),\n" +
+                        "   CONSTRAINT fk_arcana\n" +
+                        "      FOREIGN KEY(id_arcana) \n" +
+                        "\t  REFERENCES arcana(id_arcana)\n" +
+                        "\t  MATCH SIMPLE\n" +
+                        "\t  ON UPDATE NO ACTION ON DELETE NO ACTION,\n" +
+                        "   CONSTRAINT fk_debilidad\n" +
+                        "      FOREIGN KEY(id_debilidad)\n" +
+                        "      REFERENCES debilidades(id_debilidad)\n" +
+                        "      MATCH SIMPLE\n" +
+                        "      ON UPDATE NO ACTION ON DELETE CASCADE\n" +
+                        ")"
+        ).executeUpdate();
+
+        // finaliza la transacción
+        entityManager.getTransaction().commit();
+
+        // cierra el EntityManager y el EntityManagerFactory
+        entityManager.close();
+        entityManagerFactory.close();
+    }
+
+
+    /**
+     * Dropea la tabla entera de persona
+     *
+     @throws javax.persistence.PersistenceException Devuelve este error si hay un problema dropeando la tabla
+     */
+    public void dropTablePersona() {
+        // crea un EntityManagerFactory utilizando la configuración definida en persistence.xml
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("JPAMagazines");
+
+        // obtiene un EntityManager a partir del EntityManagerFactory
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+
+        // comienza una transacción
+        entityManager.getTransaction().begin();
+
+        // dropea la tabla persona
+        entityManager.createNativeQuery("DROP TABLE persona").executeUpdate();
+
+        // finaliza la transacción
+        entityManager.getTransaction().commit();
+
+        // cierra el EntityManager y el EntityManagerFactory
+        entityManager.close();
+        entityManagerFactory.close();
+    }
+
+
 }
 

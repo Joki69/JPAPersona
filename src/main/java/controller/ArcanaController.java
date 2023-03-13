@@ -1,5 +1,10 @@
 package controller;
 
+import model.Arcana;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,6 +13,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 /**
  * En la clase ArcanaController como su nombre indica contendrá los metodos necesarios para manipular o acceder a
@@ -17,7 +23,10 @@ import java.util.Scanner;
  */
 public class ArcanaController {
     private Connection connection;
-    private Scanner scanner;
+    private EntityManagerFactory entityManagerFactory;
+
+
+   // private Scanner scanner;
 
     /**
      * Con este constructor será lo que nos permita conectar a la base de datos y usar sus metodos desde el main
@@ -26,115 +35,136 @@ public class ArcanaController {
      */
     public ArcanaController(Connection connection) {
         this.connection = connection;
-        this.scanner = new Scanner(System.in);
+       // this.scanner = new Scanner(System.in);
+    }
+    /**
+     * Creamos una nueva instancia del controlador de arcana usando la conexion de la base de datos
+     *
+     * @param connection Le pasamos la conexion de la base de datos
+     * @param entityManagerFactory Le pasamos tambien el Hibernate que hemos creado
+     */
+    public ArcanaController(Connection connection, EntityManagerFactory entityManagerFactory) {
+        this.connection = connection;
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     /**
-     * Con este metodo podremos borrar la tabla de arcanas.
+     * Esta clase se encarga de leer el archivo CSV, y con este archivo rellenarnos toda la tabla de nuestra
+     * base de datos con la informacion que saca del archivo.
+     *
+     * @param filename la ruta del archivo character_type que queremos leer
+     * @return Una lista de character_type, que luego se meteran con ayuda de otros metodos
+     * @throws IOException Devuelve este error si hay algun problema al leer los archivos
      */
-    public void borrarTablaArcana(){
-        try{
-            Statement st = connection.createStatement();
+    public List<Arcana> readArcana(String filename) throws IOException {
+        int arcanaId;
+        String nombreArcana;
+        List<Arcana> arcanaList = new ArrayList();
 
-            st.executeUpdate("DROP TABLE arcana");
-        }catch (SQLException e){
-            System.out.println("No se ha podido borrar la tabla arcana");
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+        String linea = "";
+        int contadorId=1;
+        while ((linea = br.readLine()) != null) {
+            StringTokenizer str = new StringTokenizer(linea, "\n");
+            nombreArcana = str.nextToken();
+            arcanaList.add(new Arcana(contadorId,nombreArcana));
+            contadorId++;
         }
+        br.close();
+        return arcanaList;
     }
+    /**
+     * Añade un arcana (que procesamos con el csv) y lo mete en la base de datos
+     *
+     * @param arcana El arcama que queremos añadir
+     */
+    public void addArcana(Arcana arcana) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        Arcana characterTypeExists = (Arcana) em.find(Arcana.class, arcana.getArcanaId());
+        if (characterTypeExists == null ){
+            System.out.println("inserting arcana...");
+            em.persist(arcana);
+        }
+        em.merge(arcana);
+        em.getTransaction().commit();
+        em.close();
+    }
+
 
     /**
-     * Aqui podremos crear la tabla arcanas vacías
+     * Ordena los arcama por su nombre y los lista
      */
-    public void crearTablaArcana(){
-        try{
-            Statement st = connection.createStatement();
+    public void listAllArcana() {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        List<Arcana> result = em.createQuery("from Arcana", Arcana.class)
+                .getResultList();
 
-            st.executeUpdate("CREATE TABLE arcana (" +
-                    "id_arcana serial," +
-                    "nombre varchar(1000)," +
-                    "primary key(id_arcana));");
-
-            st.close();
-
-        }catch (SQLException e){
-            System.out.println("Error: No se pueden crear las tablas, fijate si ya estan creadas.");
+        for (Arcana arcana : result) {
+            System.out.println(arcana.toString());
         }
+        em.getTransaction().commit();
+        em.close();
     }
+
 
     /**
-     * Con este metodo podremos poblar la tabla de arcana con el csv que le corresponde
+     * Crea la tabla arcana con ayuda del schema SQL
+     *
      */
-    public void poblarArcana(){
-        List<String[]> csvData = new ArrayList<>();
-        try{
-            BufferedReader br = new BufferedReader(new FileReader("src/main/resources/Arcanas.csv"));
-            String line;
+    public void createTableArcana(){
+        // crea un EntityManagerFactory utilizando la configuración definida en persistence.xml
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("JPAMagazine");
 
-            while ((line = br.readLine()) != null){
-                String[] data = line.split("\n");
-                csvData.add(data);
-            }
+        // obtiene un EntityManager a partir del EntityManagerFactory
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
 
-            for (String[] data : csvData) {
-                try{
-                    String nombre = data[0];
+        // comienza una transacción
+        entityManager.getTransaction().begin();
 
-                    String sql = "INSERT INTO arcana " + "(nombre) VALUES(?)";
+        // crea la tabla Arcana
+        entityManager.createNativeQuery(
+                "CREATE TABLE arcana (\n" +
+                        "id_arcana serial NOT NULL,\n" +
+                        "nombre character varying(1000) NOT NULL,\n" +
+                        "CONSTRAINT pk_arcana PRIMARY KEY(id_arcana))"
+        ).executeUpdate();
 
-                    PreparedStatement pst = connection.prepareStatement(sql);
-                    pst.setString(1,nombre);
+        // finaliza la transacción
+        entityManager.getTransaction().commit();
 
-                    pst.executeUpdate();
-                    pst.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
-            }
-        }catch (FileNotFoundException e){
-            e.printStackTrace();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+        // cierra el EntityManager y el EntityManagerFactory
+        entityManager.close();
+        entityManagerFactory.close();
     }
+
 
     /**
-     * Con este metodo podremos mostrar toda la información que contiene la tabla de arcanas por la terminal
+     * Drop la tabla Arcana
+     *
+     @throws javax.persistence.PersistenceException Devuelve este error si hay un problema con el drop la tabla
      */
-    public void mostrarArcana(){
-        System.out.println("\nARCANAS");
-        ResultSet rs = null;
-        String sql = "SELECT * FROM arcana";
-        try{
-            Statement st = connection.createStatement();
+    public void dropTableArcana() {
+        // crea un EntityManagerFactory utilizando la configuración definida en persistence.xml
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("JPAPersona");
 
-            rs = st.executeQuery(sql);
+        // obtiene un EntityManager a partir del EntityManagerFactory
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
 
-            while (rs.next()) {
-                System.out.println("******************************************************" +
-                        "\nID Arcana: " + rs.getString("id_arcana") +
-                        "\nNombre Arcana: " + rs.getString("nombre") +
-                        "\n******************************************************");
-            }
+        // comienza una transacción
+        entityManager.getTransaction().begin();
 
-            rs.close();
-            st.close();
+        // dropea la tabla characters
+        entityManager.createNativeQuery("DROP TABLE arcana").executeUpdate();
 
-        }catch (SQLException e){
-            System.out.println("Error: La tabla characters no existe");
-        }
+        // finaliza la transacción
+        entityManager.getTransaction().commit();
+
+        // cierra el EntityManager y el EntityManagerFactory
+        entityManager.close();
+        entityManagerFactory.close();
     }
-
-    /**
-     * Con este metodo podremos seleccionar uno de los nombres de nuestra tabla para eliminarlo
-     */
-    public void borrarTablaArcanaNombre(String entidad){
-        ResultSet rs = null;
-        try{
-            Statement st = connection.createStatement();
-            st.executeUpdate("DELETE FROM arcana WHERE nombre = '" + entidad + "'");
-        }catch (SQLException e){
-            System.out.println("No se ha podido borrar el parametro de arcana seleccionado");
-        }
-    }
-
 }
+
+

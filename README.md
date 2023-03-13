@@ -1,2 +1,2 @@
-# JPAMagazines
-JPAMagazines
+# JPAPersona
+JPAPersona
