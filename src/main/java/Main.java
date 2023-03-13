@@ -130,8 +130,8 @@ public class Main {
                     break;
 
                 case 2:
-
-                    System.out.println("2!!");
+                    personaController.setContadorNuevosPersonaID(226);
+                    System.out.println("2");
 
                     try{
                         List<Arcana> arcanas = arcanaController.readArcana("src/main/resources/Arcanas.csv");
@@ -289,132 +289,13 @@ public class Main {
                             personaController.createNewPersona(idArcana,nombre_persona,nombre_arcana,historia);
                     break;
 
-                /*
-                case 8:
-                    characterController.orderCharactersByName();
-                    break;
-
                 case 9:
-                    System.out.println("Que weapon quieres buscar?");
-                    String weaponName = scanner.nextLine();
+                    System.out.println("Escribe el nombre del persona que quieres borrar");
+                personaController.deletePersonaName(scanner.nextInt());
+                break;
 
-                    try{
-                        weaponController.listAllWeaponsByName(weaponName);
-                    }catch (Exception e){
-                        System.out.println("No se ha encontrado ningun Weapon con el nombre que has proporcionado, intentalo de nuevo");
-                    }
-
-                    break;
-
-                case 10:
-                    System.out.println("Que ID tiene el character que quieres cambiar? Del 1 al 30");
-                    int idCharacter = scanner.nextInt();
-                    scanner.nextLine();
-                    if(idCharacter >= 1 && idCharacter < 31){
-                        System.out.print("Escribe el nombre nuevo para el character que quieres modificar: ");
-                        String updateName = scanner.nextLine();
-
-                        characterController.updateCharacter(idCharacter,updateName);
-                    }
-                    else{
-                        System.out.println("La ID que estas intentando buscar no existe, recuerda que tiene que ser del 1 al 30!");
-                    }
-                    break;
-
-                case 11:
-                    System.out.println("Que ID tiene el weapon que quieres cambiar? Del 1 al 30");
-                    int idWeapon = scanner.nextInt();
-                    scanner.nextLine();
-                    if(idWeapon >= 1 && idWeapon < 31){
-                        System.out.print("Escribe el daño nuevo para el weapon que quieres modificar: ");
-                        int updateDamage = scanner.nextInt();
-
-                        weaponController.updateWeapon(idWeapon,updateDamage);
-                    }
-                    else{
-                        System.out.println("La ID que estas intentando buscar no existe, recuerda que tiene que ser del 1 al 30!");
-                    }
-                    break;
-
-                case 12:
-                    System.out.println("Para crear un nuevo character, rellena este formulario");
-                    System.out.println();
-
-                    System.out.println("Que tipo de character es, 1 - Plant, 2 - Zombie");
-                    int newCharacterTypeId = scanner.nextInt();
-                    scanner.nextLine();
-                    if(newCharacterTypeId != 1 && newCharacterTypeId != 2){
-                        System.out.println("No puede ser otro numero, tiene que ser el 1 o el 2!");
-                    }
-                    else{
-                        System.out.println("Que arma quieres tener en este character, del 1 al 30");
-                        int newWeaponId = scanner.nextInt();
-                        scanner.nextLine();
-                        if(newWeaponId >= 1 && newWeaponId <= 30){
-                            System.out.println("Que nombre tiene este character?");
-                            String newCharacterName = scanner.nextLine();
-
-                            System.out.println("Inserta la imagen del character, por ejemplo: hola.jpg o hola.png");
-                            String newCharacterImage = scanner.nextLine();
-
-                            System.out.println("Cuanta vida tiene este character?");
-                            String newCharacterHealth = scanner.nextLine();
-
-                            System.out.println("Que tipo de variante es este character?");
-                            String newCharacterVariant = scanner.nextLine();
-
-                            System.out.println("Que tipo de habilidad/es tiene este character?");
-                            String newCharacterAbility = scanner.nextLine();
-
-                            System.out.println("Que tipo de clase es este character?");
-                            String newCharacterFPSClass = scanner.nextLine();
-
-                            characterController.createCharacterManually(newCharacterTypeId,newWeaponId,newCharacterName,
-                                    newCharacterImage,newCharacterHealth,newCharacterVariant,newCharacterAbility,
-                                    newCharacterFPSClass);
-                        }
-                        else{
-                            System.out.println("Esta arma no existe, debe de ser un arma del 1 al 30");
-                        }
-                    }
-
-                    break;
-
-                case 13:
-                    System.out.println("Para crear un nuevo weapon, rellena este formulario");
-                    System.out.println();
-
-                    System.out.println("Que nombre quieres que tenga esta arma?");
-                    String newWeaponName = scanner.nextLine();
-
-                    System.out.println("Que daño quieres que haga esta nueva arma?");
-                    int newWeaponDamage = scanner.nextInt();
-                    scanner.nextLine();
-                    weaponController.createWeaponManually(newWeaponName,newWeaponDamage);
-
-                    break;
-
-                case 14:
-                    System.out.println("WARNING: Si quieres borrar un character, debes borrar su weapon primero! Ya que el weapon depende del character");
-                    System.out.print("Inserta el nombre del character que quieres borrar: ");
-                    String deleteNameCharacter = scanner.nextLine();
-
-
-                    characterController.deleteCharacterByName(deleteNameCharacter);
-
-                    break;
-
-
-                case 15:
-                    System.out.print("Inserta el nombre del weapon que quieres borrar: ");
-                    String deleteNameWeapon = scanner.nextLine();
-
-                    weaponController.deleteWeaponByName(deleteNameWeapon);
-                    break;
-*/
 
                 default:
-                    System.out.println("Acha luegor!!");
                     salirMenu = true;
                     //System.exit(1);
             }

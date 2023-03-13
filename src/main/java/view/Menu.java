@@ -44,10 +44,9 @@ public class Menu {
             System.out.println("5. Listar toda la tabla arcana.");
             System.out.println("6. Hacer drop de todas las tablas.");
             System.out.println("7. Modificar el nombre de un persona");
-            System.out.println("12. Crear un character manualmente");
-            System.out.println("13. Crear un weapon manualmente");
-            System.out.println("14. Borrar un character por su nombre.");
-            System.out.println("15. Borrar un weapon por su nombre.");
+            System.out.println("8. Crear un persona manualmente");
+            System.out.println("9. Borrar un persona por su nombre.");
+
 
             System.out.println("0. Sortir. ");
 
@@ -59,8 +58,7 @@ public class Menu {
                 e.printStackTrace();
             }
         } while (option != 1  && option != 2 && option != 3 && option != 4 && option != 5 && option != 6
-                && option != 7 && option != 8 && option != 9 && option != 10 && option != 11 && option != 12
-                && option != 13 && option != 14 && option != 15 && option != 16 && option != 0);
+                && option != 7 && option != 8 && option != 9 && option != 0);
 
         return option;
     }

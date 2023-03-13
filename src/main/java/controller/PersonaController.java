@@ -22,7 +22,18 @@ public class PersonaController {
     private Connection connection;
     private EntityManagerFactory entityManagerFactory;
 
-    private int contadorNuevosPersonaID=226;
+    /**
+     * con esta variable controlamos los id de los persona por si el usuario decide añadir manualmente
+     */
+    private int contadorNuevosPersonaID=-226;
+
+    public int getContadorNuevosPersonaID() {
+        return contadorNuevosPersonaID;
+    }
+
+    public void setContadorNuevosPersonaID(int contadorNuevosPersonaID) {
+        this.contadorNuevosPersonaID = contadorNuevosPersonaID;
+    }
 
     private ArcanaController arcanaController = new ArcanaController(connection);
 
@@ -68,6 +79,7 @@ public class PersonaController {
             debilidadMap.put(debilidad.getDebilidadId(), debilidad);
             contadorIdDebilidad++;
         }
+
         int contadorPersona=1;
         // Crea los objetos de personaje con las armas correspondientes
         for (String personaLine : personaLines) {
@@ -290,6 +302,27 @@ public class PersonaController {
         persona.setNombreArcana(arcanaNuevo);
         em.persist(persona);
         em.getTransaction().commit();
+        em.close();
+    }
+    /**
+     * Borra el character o los characters que poseen el mismo nombre que pone nuestro usuario por pantalla
+     *
+     @param idBorrar El id del persona a borrar
+     @throws javax.persistence.PersistenceException Devuelve este error si ha habido un problema borrando
+     */
+    public void deletePersonaName(int idBorrar){
+        String sql = "FROM persona WHERE nombre_persona = :name";
+
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        Persona persona = em.find(Persona.class,idBorrar);
+        em.remove(persona);
+
+        try{
+            em.getTransaction().commit();
+        }catch (Exception e){
+
+        }
         em.close();
     }
 
