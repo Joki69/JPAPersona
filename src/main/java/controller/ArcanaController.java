@@ -31,11 +31,11 @@ public class ArcanaController {
     /**
      * Con este constructor será lo que nos permita conectar a la base de datos y usar sus metodos desde el main
      *
-     * @param connection
+     * @param connection hace la coneccion con la base
      */
     public ArcanaController(Connection connection) {
         this.connection = connection;
-       // this.scanner = new Scanner(System.in);
+
     }
     /**
      * Creamos una nueva instancia del controlador de arcana usando la conexion de la base de datos

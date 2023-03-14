@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.*;
 
+/**
+ * Esta clase controla la tabla de debilidades de la base de datos
+ */
 public class DebilidadController {
     private Connection connection;
     private EntityManagerFactory entityManagerFactory;
@@ -20,7 +23,7 @@ public class DebilidadController {
      * Creamos una nueva instancia del controlador de Debilidades usando la conexion de la base de datos
      *
      * @param connection           Le pasamos la conexion de la base de datos
-     * @param entityManagerFactory
+     * @param entityManagerFactory Controla la conexion que has establecido
      */
     public DebilidadController(Connection connection, EntityManagerFactory entityManagerFactory) {
         this.connection = connection;
@@ -38,7 +41,7 @@ public class DebilidadController {
     public List<Debilidad> readDebilidadesFile(String debilidadesFile) throws IOException {
         int id;
         String name;
-        List<Debilidad> weaponsList = new ArrayList<Debilidad>();
+        List<Debilidad> debilidadList = new ArrayList<Debilidad>();
 
         BufferedReader br = new BufferedReader(new FileReader(debilidadesFile));
         String linea = "";
@@ -47,12 +50,12 @@ public class DebilidadController {
             StringTokenizer str = new StringTokenizer(linea);
             name = str.nextToken();
             // System.out.println(id + name + damage);
-            weaponsList.add(new Debilidad(contadorId,name));
+            debilidadList.add(new Debilidad(contadorId,name));
             contadorId++;
         }
         br.close();
 
-        return weaponsList;
+        return debilidadList;
     }
     /**
      * Añade una debilidad (que procesamos con el csv) y lo mete en la base de datos

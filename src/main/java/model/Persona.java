@@ -56,6 +56,15 @@ public class Persona implements Serializable {
     @Column(name = "historia")
     String historia;
 
+    /**
+     * Contructor del objeto persona
+     * @param personaId id del persona
+     * @param debilidadId id de su debilidad
+     * @param arcanaId id de su arcana
+     * @param personaNombre nombre del persona
+     * @param nombreArcana nombre de su arcana
+     * @param historia historia del persona
+     */
     public Persona(int personaId, int debilidadId, int arcanaId, String personaNombre, String nombreArcana, String historia) {
         this.personaId = personaId;
         this.debilidadId = debilidadId;
@@ -65,6 +74,9 @@ public class Persona implements Serializable {
         this.historia = historia;
     }
 
+    /**
+     * Constructor vacio para no tener problemas con el codigo
+     */
     public Persona(){}
 
     /**
@@ -139,6 +151,7 @@ public class Persona implements Serializable {
     public String getArcanaNombre() {
         return nombreArcana;
     }
+
     /**
      * Editamos el nombre del arcana
      *
@@ -156,10 +169,18 @@ public class Persona implements Serializable {
         return historia;
     }
 
+    /**
+     * devuelve el nombre del arcana
+     * @return nombreArcana
+     */
     public String getNombreArcana() {
         return nombreArcana;
     }
 
+    /**
+     *  Permite cambiar el nombre del arcana
+     * @param nombreArcana el nombre del arcana
+     */
     public void setNombreArcana(String nombreArcana) {
         this.nombreArcana = nombreArcana;
     }
@@ -167,7 +188,7 @@ public class Persona implements Serializable {
     /**
      * Editamos la historia del persona
      *
-     * @param historiasu nueva historia
+     * @param historia nueva historia
      */
     public void setHistoria(String historia) {
         this.historia = historia;

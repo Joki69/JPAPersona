@@ -20,6 +20,9 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * esta clase se encargara de lanzar el programa y hará en funcion de las necesidades del usuario
+ */
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
 

@@ -27,10 +27,18 @@ public class PersonaController {
      */
     private int contadorNuevosPersonaID=-226;
 
+    /**
+     * Mostrara el contador de id de persona
+     * @return contadorNuevosPersonaID
+     */
     public int getContadorNuevosPersonaID() {
         return contadorNuevosPersonaID;
     }
 
+    /**
+     * Cambia el valor del contador
+     * @param contadorNuevosPersonaID el contador de ID
+     */
     public void setContadorNuevosPersonaID(int contadorNuevosPersonaID) {
         this.contadorNuevosPersonaID = contadorNuevosPersonaID;
     }
@@ -289,6 +297,14 @@ public class PersonaController {
 
         em.close();
     }
+
+    /**
+     *  Creador de persona manual por el usuario
+     * @param idArcanaDebilidad el id del arcana y su debilidad
+     * @param nombreNuevo el nombre del persona
+     * @param arcanaNuevo el nombre del arcana
+     * @param historia la historia del persona
+     */
     public void createNewPersona(int idArcanaDebilidad, String nombreNuevo, String arcanaNuevo, String historia) {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();

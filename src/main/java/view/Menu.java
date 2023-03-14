@@ -62,6 +62,11 @@ public class Menu {
 
         return option;
     }
+
+    /**
+     * Esta función comprobara dentro de los "arcana" disponibles para que el usuario no pueda introducir un valor incorrecto y rebajara la cantidad de codigo repetido
+     * @return la respuesta del usuario (arcana)
+     */
     public String arcanaChek() {
         Scanner scanner = new Scanner(System.in);
         while (true) {

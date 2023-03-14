@@ -42,6 +42,9 @@ public class Debilidad implements Serializable {
         this.nombreDebilidad = nombreDebilidad ;
     }
 
+    /**
+     * Contructor vacio para no generar errores
+     */
     public Debilidad(){}
     /**
      * Devuelve la ID de una debilidad
