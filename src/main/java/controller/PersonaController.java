@@ -1,5 +1,6 @@
 package controller;
 
+import model.Arcana;
 import model.Debilidad;
 import model.Persona;
 
@@ -96,72 +97,96 @@ public class PersonaController {
             String[] fields = personaLine.split("\",\"");
             // Crea un objeto de persona con los campos correspondientes
             int id_arcana = 0;
+            String nombre_debilidad="";
             switch (fields[0]) {
                 case "Fool":
                     id_arcana = 1;
+                    nombre_debilidad="Strike";
                     break;
                 case "Magician":
                     id_arcana = 2;
+                    nombre_debilidad="Psychokinesis";
                     break;
                 case "Priestess":
                     id_arcana = 3;
+                    nombre_debilidad="Bless";
                     break;
                 case "Empress":
                     id_arcana = 4;
+                    nombre_debilidad="Wind";
                     break;
                 case "Emperor":
                     id_arcana = 5;
+                    nombre_debilidad="Fire";
                     break;
                 case "Hierophant":
                     id_arcana = 6;
+                    nombre_debilidad="Psychokinesis";
                     break;
                 case "Lovers":
                     id_arcana = 7;
+                    nombre_debilidad="Wind";
                     break;
                 case "Chariot":
                     id_arcana = 8;
+                    nombre_debilidad="Ice";
                     break;
                 case "Justice":
                     id_arcana = 9;
+                    nombre_debilidad="Electricity";
                     break;
                 case "Hermit":
                     id_arcana = 10;
+                    nombre_debilidad="Strike";
                     break;
                 case "Fortune":
+                    nombre_debilidad="Ice";
                     id_arcana = 11;
                     break;
                 case "Strength":
+                    nombre_debilidad="Psychokinesis";
                     id_arcana = 12;
                     break;
                 case "Hanged Man":
                     id_arcana = 13;
+                    nombre_debilidad="Nuclear";
                     break;
                 case "Death":
                     id_arcana = 14;
+                    nombre_debilidad="Bless";
                     break;
                 case "Temperance":
                     id_arcana = 15;
+                    nombre_debilidad="Pierce";
                     break;
                 case "Devil":
                     id_arcana = 16;
+                    nombre_debilidad="Bless";
                     break;
                 case "Tower":
                     id_arcana = 17;
+                    nombre_debilidad="Electricity";
                     break;
                 case "Star":
                     id_arcana = 18;
+                    nombre_debilidad="Almighty";
                     break;
                 case "Moon":
                     id_arcana = 19;
+                    nombre_debilidad="Pierce";
                     break;
                 case "Sun":
                     id_arcana = 20;
+                    nombre_debilidad="Nuclear";
                     break;
                 case "Judgement":
                     id_arcana = 21;
+                    nombre_debilidad="Almighty";
                     break;
             }
-            Persona persona = new Persona(contadorPersona,id_arcana,id_arcana,fields[1],fields[0],fields[2]);
+            Debilidad debilidad = new Debilidad( id_arcana,nombre_debilidad);
+            Arcana arcana= new Arcana(id_arcana,fields[0]);
+            Persona persona = new Persona(contadorPersona,debilidad,arcana,fields[1],fields[0],fields[2]);
             // Agrega el objeto de personaje a la lista
             personas.add(persona);
             contadorPersona++;
@@ -305,17 +330,11 @@ public class PersonaController {
      * @param arcanaNuevo el nombre del arcana
      * @param historia la historia del persona
      */
-    public void createNewPersona(int idArcanaDebilidad, String nombreNuevo, String arcanaNuevo, String historia) {
+    public void createNewPersona(Arcana arcana,Debilidad debilidad, String nombreNuevo, String arcanaNuevo, String historia) {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
-        Persona persona= new Persona();
         this.contadorNuevosPersonaID++;
-        persona.setPersonaNombre(nombreNuevo);
-        persona.setPersonaId(contadorNuevosPersonaID);
-        persona.setArcanaId(idArcanaDebilidad);
-        persona.setDebilidadId(idArcanaDebilidad);
-        persona.setHistoria(historia);
-        persona.setNombreArcana(arcanaNuevo);
+        Persona persona= new Persona(contadorNuevosPersonaID,debilidad,arcana,nombreNuevo,arcanaNuevo,historia);
         em.persist(persona);
         em.getTransaction().commit();
         em.close();

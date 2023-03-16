@@ -21,19 +21,17 @@ public class Persona implements Serializable {
     @Column(name = "id_persona")
     int personaId;
 
-    /**
-     * El identificador de la debilidad
-     *
-     */
-    @Column(name = "id_debilidad")
-    int debilidadId;
+    @ManyToOne
+    @JoinColumn(name = "id_debilidad")
+    public Debilidad debilidad;
 
     /**
      * El identificador del arcana
      *
      */
-    @Column(name = "id_arcana")
-    int arcanaId;
+    @ManyToOne
+    @JoinColumn(name = "id_arcana")
+    public Arcana arcana;
 
     /**
      * El nombre del persona
@@ -59,16 +57,16 @@ public class Persona implements Serializable {
     /**
      * Contructor del objeto persona
      * @param personaId id del persona
-     * @param debilidadId id de su debilidad
-     * @param arcanaId id de su arcana
+     * @param debilidad id de su debilidad
+     * @param arcana id de su arcana
      * @param personaNombre nombre del persona
      * @param nombreArcana nombre de su arcana
      * @param historia historia del persona
      */
-    public Persona(int personaId, int debilidadId, int arcanaId, String personaNombre, String nombreArcana, String historia) {
+    public Persona(int personaId,Debilidad debilidad, Arcana arcana, String personaNombre, String nombreArcana, String historia) {
         this.personaId = personaId;
-        this.debilidadId = debilidadId;
-        this.arcanaId = arcanaId;
+        this.debilidad = debilidad;
+        this.arcana = arcana;
         this.personaNombre = personaNombre;
         this.nombreArcana = nombreArcana;
         this.historia = historia;
@@ -100,33 +98,25 @@ public class Persona implements Serializable {
      *
      @return Su identificador
      */
-    public int getDebilidadId() {
-        return debilidadId;
-    }
+
     /**
      * Editamos el identificador de la debilidad
      *
      * @param debilidadId Le pasamos la nueva ID
      */
-    public void setDebilidadId(int debilidadId) {
-        this.debilidadId = debilidadId;
-    }
+
     /**
      * Devuelve la ID de un arcana
      *
      @return Su identificador
      */
-    public int getArcanaId() {
-        return arcanaId;
-    }
+
     /**
      * Editamos el identificador del arcana
      *
      * @param arcanaId Le pasamos la nueva ID
      */
-    public void setArcanaId(int arcanaId) {
-        this.arcanaId = arcanaId;
-    }
+
     /**
      * Nos da el nombre del persona
      *
@@ -198,8 +188,8 @@ public class Persona implements Serializable {
     public String toString() {
         return "Persona{" +
                 "personaId=" + personaId +
-                ", debilidadId=" + debilidadId +
-                ", arcanaId=" + arcanaId +
+                ", debilidad=" + debilidad +
+                ", arcana=" + arcana +
                 ", personaNombre='" + personaNombre + '\'' +
                 ", nombreArcana='" + nombreArcana + '\'' +
                 ", historia='" + historia + '\'' +

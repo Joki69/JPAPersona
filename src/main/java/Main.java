@@ -222,74 +222,100 @@ public class Main {
                     System.out.println("Escribe el arcana del persona que quieras añadir");
                     String nombre_arcana =  menu.arcanaChek();
                     int idArcana=0;
-                    if(nombre_arcana.equals("Fool")) {
-                        idArcana=1;
-                    } else if (nombre_arcana.equals("Magician")) {
-                        idArcana=2;
-                    }
-                    else if (nombre_arcana.equals("Priestess")) {
-                        idArcana=3;
-                    }
-                    else if (nombre_arcana.equals("Empress")) {
-                        idArcana=4;
-                    }
-                    else if (nombre_arcana.equals("Emperor")) {
-                        idArcana=5;
-                    }
-                    else if (nombre_arcana.equals("Hierophant")) {
-                        idArcana=6;
-                    }
-                    else if (nombre_arcana.equals("Lovers")) {
-                        idArcana=7;
-                    }
-                    else if (nombre_arcana.equals("Chariot")) {
-                        idArcana=8;
-                    }
-                    else if (nombre_arcana.equals("Justice")) {
-                        idArcana=9;
-                    }
-                    else if (nombre_arcana.equals("Hermit")) {
-                        idArcana=10;
-                    }
-                    else if (nombre_arcana.equals("Fortune")) {
-                        idArcana=11;
-                    }
-                    else if (nombre_arcana.equals("Strength")) {
-                        idArcana=12;
-                    }
-                    else if (nombre_arcana.equals("Hanged Man")) {
-                        idArcana=13;
-                    }
-                    else if (nombre_arcana.equals("Death")) {
-                        idArcana=14;
-                    }
-                    else if (nombre_arcana.equals("Temperance")) {
-                        idArcana=15;
-                    }
-                    else if (nombre_arcana.equals("Devil")) {
-                        idArcana=16;
-                    }
-                    else if (nombre_arcana.equals("Tower")) {
-                        idArcana=17;
-                    }
-                    else if (nombre_arcana.equals("Star")) {
-                        idArcana=18;
-                    }
-                    else if (nombre_arcana.equals("Moon")) {
-                        idArcana=19;
-                    }
-                    else if (nombre_arcana.equals("Sun")) {
-                        idArcana=20;
-                    }
-                    else if (nombre_arcana.equals("Judgement")) {
-                        idArcana=21;
+                    String nombre_debilidad="";
+                    switch (nombre_arcana) {
+                        case "Fool":
+                            idArcana = 1;
+                            nombre_debilidad="Strike";
+                            break;
+                        case "Magician":
+                            idArcana = 2;
+                            nombre_debilidad="Psychokinesis";
+                            break;
+                        case "Priestess":
+                            idArcana = 3;
+                            nombre_debilidad="Bless";
+                            break;
+                        case "Empress":
+                            idArcana = 4;
+                            nombre_debilidad="Wind";
+                            break;
+                        case "Emperor":
+                            idArcana = 5;
+                            nombre_debilidad="Fire";
+                            break;
+                        case "Hierophant":
+                            idArcana = 6;
+                            nombre_debilidad="Psychokinesis";
+                            break;
+                        case "Lovers":
+                            idArcana = 7;
+                            nombre_debilidad="Wind";
+                            break;
+                        case "Chariot":
+                            idArcana = 8;
+                            nombre_debilidad="Ice";
+                            break;
+                        case "Justice":
+                            idArcana = 9;
+                            nombre_debilidad="Electricity";
+                            break;
+                        case "Hermit":
+                            idArcana = 10;
+                            nombre_debilidad="Strike";
+                            break;
+                        case "Fortune":
+                            nombre_debilidad="Ice";
+                            idArcana = 11;
+                            break;
+                        case "Strength":
+                            nombre_debilidad="Psychokinesis";
+                            idArcana = 12;
+                            break;
+                        case "Hanged Man":
+                            idArcana = 13;
+                            nombre_debilidad="Nuclear";
+                            break;
+                        case "Death":
+                            idArcana = 14;
+                            nombre_debilidad="Bless";
+                            break;
+                        case "Temperance":
+                            idArcana = 15;
+                            nombre_debilidad="Pierce";
+                            break;
+                        case "Devil":
+                            idArcana = 16;
+                            nombre_debilidad="Bless";
+                            break;
+                        case "Tower":
+                            idArcana = 17;
+                            nombre_debilidad="Electricity";
+                            break;
+                        case "Star":
+                            idArcana = 18;
+                            nombre_debilidad="Almighty";
+                            break;
+                        case "Moon":
+                            idArcana = 19;
+                            nombre_debilidad="Pierce";
+                            break;
+                        case "Sun":
+                            idArcana = 20;
+                            nombre_debilidad="Nuclear";
+                            break;
+                        case "Judgement":
+                            idArcana = 21;
+                            nombre_debilidad="Almighty";
+                            break;
                     }
                     System.out.println("Escribe el nombre del persona que quieras añadir");
                     String nombre_persona = scanner.nextLine();
                     System.out.println("Escribe la historia del persona que quieras añadir");
                     String historia = scanner.nextLine();
-
-                            personaController.createNewPersona(idArcana,nombre_persona,nombre_arcana,historia);
+                    Arcana arcana = new Arcana(idArcana,nombre_arcana);
+                    Debilidad debilidad = new Debilidad(idArcana,nombre_debilidad);
+                            personaController.createNewPersona(arcana,debilidad,nombre_persona,nombre_arcana,historia);
                     break;
 
                 case 9:

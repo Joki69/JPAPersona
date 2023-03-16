@@ -18,7 +18,7 @@ id_debilidad integer NOT NULL,
 nombre_arcana character varying(100),
 nombre_persona character varying(100),
 historia character varying(3000),
-CONSTRAINT pk_persona PRIMARY KEY(id_persona),
+--CONSTRAINT pk_persona PRIMARY KEY(id_persona),
    CONSTRAINT fk_arcana
       FOREIGN KEY(id_arcana) 
 	  REFERENCES arcana(id_arcana)
