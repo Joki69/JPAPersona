@@ -15,7 +15,6 @@ CREATE TABLE persona (
 id_persona serial NOT NULL,
 id_arcana integer,
 id_debilidad integer NOT NULL,
-nombre_arcana character varying(100),
 nombre_persona character varying(100),
 historia character varying(3000),
 --CONSTRAINT pk_persona PRIMARY KEY(id_persona),

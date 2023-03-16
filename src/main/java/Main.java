@@ -315,7 +315,7 @@ public class Main {
                     String historia = scanner.nextLine();
                     Arcana arcana = new Arcana(idArcana,nombre_arcana);
                     Debilidad debilidad = new Debilidad(idArcana,nombre_debilidad);
-                            personaController.createNewPersona(arcana,debilidad,nombre_persona,nombre_arcana,historia);
+                            personaController.createNewPersona(arcana,debilidad,nombre_persona,historia);
                     break;
 
                 case 9:

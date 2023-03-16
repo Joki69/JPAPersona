@@ -41,13 +41,6 @@ public class Persona implements Serializable {
     String personaNombre;
 
     /**
-     * El nombre del arcana
-     *
-     */
-    @Column(name = "nombre_arcana")
-    String nombreArcana;
-
-    /**
      * La historia del persona
      *
      */
@@ -60,15 +53,13 @@ public class Persona implements Serializable {
      * @param debilidad id de su debilidad
      * @param arcana id de su arcana
      * @param personaNombre nombre del persona
-     * @param nombreArcana nombre de su arcana
      * @param historia historia del persona
      */
-    public Persona(int personaId,Debilidad debilidad, Arcana arcana, String personaNombre, String nombreArcana, String historia) {
+    public Persona(int personaId,Debilidad debilidad, Arcana arcana, String personaNombre, String historia) {
         this.personaId = personaId;
         this.debilidad = debilidad;
         this.arcana = arcana;
         this.personaNombre = personaNombre;
-        this.nombreArcana = nombreArcana;
         this.historia = historia;
     }
 
@@ -133,23 +124,7 @@ public class Persona implements Serializable {
     public void setPersonaNombre(String personaNombre) {
         this.personaNombre = personaNombre;
     }
-    /**
-     * Nos devuelve el nombre del arcana
-     *
-     * @return el nombre del arcana
-     */
-    public String getArcanaNombre() {
-        return nombreArcana;
-    }
 
-    /**
-     * Editamos el nombre del arcana
-     *
-     * @param arcanaNombre su nuevo nombre
-     */
-    public void setArcanaNombre(String arcanaNombre) {
-        this.nombreArcana = arcanaNombre;
-    }
     /**
      * Nos devuelve la historia del persona
      *
@@ -159,21 +134,6 @@ public class Persona implements Serializable {
         return historia;
     }
 
-    /**
-     * devuelve el nombre del arcana
-     * @return nombreArcana
-     */
-    public String getNombreArcana() {
-        return nombreArcana;
-    }
-
-    /**
-     *  Permite cambiar el nombre del arcana
-     * @param nombreArcana el nombre del arcana
-     */
-    public void setNombreArcana(String nombreArcana) {
-        this.nombreArcana = nombreArcana;
-    }
 
     /**
      * Editamos la historia del persona
@@ -191,7 +151,6 @@ public class Persona implements Serializable {
                 ", debilidad=" + debilidad +
                 ", arcana=" + arcana +
                 ", personaNombre='" + personaNombre + '\'' +
-                ", nombreArcana='" + nombreArcana + '\'' +
                 ", historia='" + historia + '\'' +
                 '}';
     }

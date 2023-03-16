@@ -186,7 +186,7 @@ public class PersonaController {
             }
             Debilidad debilidad = new Debilidad( id_arcana,nombre_debilidad);
             Arcana arcana= new Arcana(id_arcana,fields[0]);
-            Persona persona = new Persona(contadorPersona,debilidad,arcana,fields[1],fields[0],fields[2]);
+            Persona persona = new Persona(contadorPersona,debilidad,arcana,fields[1],fields[2]);
             // Agrega el objeto de personaje a la lista
             personas.add(persona);
             contadorPersona++;
@@ -249,7 +249,6 @@ public class PersonaController {
                         "id_persona serial NOT NULL,\n" +
                         "id_arcana integer NOT NULL,\n" +
                         "id_debilidad integer NOT NULL,\n" +
-                        "nombre_arcana character varying(100)NOT NULL,\n" +
                         "nombre_persona character varying(100)NOT NULL,\n" +
                         "historia character varying(3000)NOT NULL,\n" +
                         "CONSTRAINT pk_persona PRIMARY KEY(id_persona),\n" +
@@ -330,11 +329,11 @@ public class PersonaController {
      * @param arcanaNuevo el nombre del arcana
      * @param historia la historia del persona
      */
-    public void createNewPersona(Arcana arcana,Debilidad debilidad, String nombreNuevo, String arcanaNuevo, String historia) {
+    public void createNewPersona(Arcana arcana,Debilidad debilidad, String nombreNuevo, String historia) {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
         this.contadorNuevosPersonaID++;
-        Persona persona= new Persona(contadorNuevosPersonaID,debilidad,arcana,nombreNuevo,arcanaNuevo,historia);
+        Persona persona= new Persona(contadorNuevosPersonaID,debilidad,arcana,nombreNuevo,historia);
         em.persist(persona);
         em.getTransaction().commit();
         em.close();
